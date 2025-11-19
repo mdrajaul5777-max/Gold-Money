@@ -475,12 +475,11 @@
 
     <!-- 
         =====================================================================
-        ====== অ্যাড নেটওয়ার্কের SDK বসানোর জায়গা (প্রথম অংশ) ======
+        ====== অ্যাড নেটওয়ার্কের SDK (আপডেটেড) ======
         =====================================================================
-        এখানে আপনার পছন্দের অ্যাড নেটওয়ার্কের দেওয়া <script> ট্যাগটি বসাতে হবে।
-        নিচের লাইনটি একটি উদাহরণ মাত্র। আপনি এটিকে পরিবর্তন করে আপনার নিজের কোড বসাবেন।
+        নতুন জোন আইডি: 10208565
     -->
-    <script src='//libtl.com/sdk.js' data-zone='9702412' data-sdk='show_9702412'></script>
+    <script src='//libtl.com/sdk.js' data-zone='10208565' data-sdk='show_10208565'></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -521,9 +520,6 @@
                     document.getElementById('profile-user-name').textContent = fullName || 'User';
                     document.getElementById('profile-user-username').textContent = userData.username ? `@${userData.username}` : 'No username';
                     
-                    // ======================================================================
-                    // ====== প্রোফাইল ছবি দেখানোর কোড (CORS সমস্যার সমাধানসহ) ======
-                    // ======================================================================
                     if (userData.photo_url) {
                         // টেলিগ্রামের CORS পলিসি এড়ানোর জন্য একটি প্রক্সি ব্যবহার করা হয়েছে।
                         const proxyUrl = 'https://api.allorigins.win/raw?url=';
@@ -590,13 +586,13 @@
 
                 watchAdBtn.disabled = true;
 
-                // --- অ্যাড নেটওয়ার্কের কোড কল করার জায়গা (দ্বিতীয় অংশ) ---
+                // --- আপডেটেড অ্যাড নেটওয়ার্কের কোড (Rewarde Popup) ---
                 // ======================================================================
-                // এখানে আপনার অ্যাড নেটওয়ার্কের দেওয়া ফাংশনটি কল করতে হবে।
-                // নিচের 'show_9702412()' লাইনটি একটি উদাহরণ।
+                // নতুন ফাংশন: show_10208565('pop')
                 // ======================================================================
-                if (typeof show_9702412 === 'function') {
-                    show_9702412().then(() => {
+                if (typeof show_10208565 === 'function') {
+                    show_10208565('pop').then(() => {
+                        // বিজ্ঞাপন সফলভাবে দেখার পর ইউজার রিওয়ার্ড পাবে
                         let earnings = parseFloat(localStorage.getItem('earnings')) + AD_REWARD;
                         let currentAdsWatched = parseInt(localStorage.getItem('adsWatched')) + 1;
                         
@@ -604,13 +600,17 @@
                         localStorage.setItem('adsWatched', currentAdsWatched.toString());
                         
                         tg.showAlert(`বিজ্ঞাপনটি দেখার জন্য আপনি BDT ${AD_REWARD.toFixed(2)} পেয়েছেন!`);
-                    }).catch(() => {
-                        tg.showAlert('বিজ্ঞাপনটি দেখাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
-                    }).finally(() => {
                         updateUI();
+                    }).catch(e => {
+                        // বিজ্ঞাপন দেখাতে কোনো সমস্যা হলে বা ইউজার বন্ধ করে দিলে
+                        console.error(e);
+                        tg.showAlert('বিজ্ঞাপনটি লোড হতে সমস্যা হয়েছে অথবা আপনি এটি মাঝপথে বন্ধ করেছেন।');
+                        // বাটন আবার এনাবল করে দেওয়া হলো যাতে ইউজার আবার চেষ্টা করতে পারে
+                        watchAdBtn.disabled = false;
                     });
                 } else {
-                    // Fallback for testing in browser without Telegram
+                    // Fallback for testing in browser without Telegram/Ad SDK
+                    console.log("SDK function not found, running in test mode.");
                     let earnings = parseFloat(localStorage.getItem('earnings')) + AD_REWARD;
                     let currentAdsWatched = parseInt(localStorage.getItem('adsWatched')) + 1;
                     localStorage.setItem('earnings', earnings.toString());
